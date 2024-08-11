@@ -2,6 +2,7 @@ package net.javaguides.springboot_restful_webservices.controller;
 
 import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
+import net.javaguides.springboot_restful_webservices.dto.UserDto;
 import net.javaguides.springboot_restful_webservices.entity.User;
 import net.javaguides.springboot_restful_webservices.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -17,8 +18,8 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        User savedUser = userService.createUser(user);
+    public ResponseEntity<UserDto> createUser(@RequestBody UserDto user) {
+        UserDto savedUser = userService.createUser(user);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
@@ -40,5 +41,11 @@ public class UserController {
         user.setId(userId);
         User updatedUser = userService.updateUser(user);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable("id") Long userId) {
+        userService.deleteUser(userId);
+        return new ResponseEntity<>("User successfully deleted!", HttpStatus.OK);
     }
 }
