@@ -3,14 +3,13 @@ package net.javaguides.springboot_restful_webservices.service.impl;
 import lombok.AllArgsConstructor;
 import net.javaguides.springboot_restful_webservices.dto.UserDto;
 import net.javaguides.springboot_restful_webservices.entity.User;
+import net.javaguides.springboot_restful_webservices.exception.EmailAlreadyExistsException;
 import net.javaguides.springboot_restful_webservices.exception.ResourceNotFoundException;
-import net.javaguides.springboot_restful_webservices.mapper.UserMapper;
 import net.javaguides.springboot_restful_webservices.repository.UserRepository;
 import net.javaguides.springboot_restful_webservices.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +22,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
+        Optional<User> optionalUser = userRepository.findByEmail(userDto.getEmail());
+
+        if (optionalUser.isPresent()) {
+            throw new EmailAlreadyExistsException("Email already exists!");
+        }
+
         User user = modelMapper.map(userDto, User.class);
         User savedUser = userRepository.save(user);
 
